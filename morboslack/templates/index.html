@@ -46,6 +46,9 @@
         $(function(){
             $('.button-collapse').sideNav();
             $('.parallax').parallax();
+            {% if installed %}
+              Materialize.toast('Installed Morboslack!', 4000)
+            {% endif %}
         });
     })(jQuery);
 </script>

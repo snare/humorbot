@@ -30,7 +30,7 @@ app = Flask(__name__)
 
 @app.route('/')
 def index():
-    return render_template('index.html', client_id=str(config.slack_client_id))
+    return render_template('index.html', client_id=str(config.slack_client_id), installed=request.args.get('installed'))
 
 
 @app.route('/slack', methods=['POST'])
@@ -265,7 +265,7 @@ def oauth():
     else:
         print("Failed to request OAuth token: {}".format(res))
 
-    return redirect('/')
+    return redirect('/?installed=true')
 
 
 def main():
