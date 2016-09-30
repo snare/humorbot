@@ -1,0 +1,8 @@
+morbotron_base: https://morbotron.com
+
+slack_token: SLACK_TOKEN
+
+team_id: TEAM_ID
+
+slack_client_id: null
+slack_client_secret: null

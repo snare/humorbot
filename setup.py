@@ -10,7 +10,7 @@ setup(
     keywords="morboslack",
     url="https://github.com/snare/morboslack",
     packages=find_packages(),
-    install_requires=['flask', 'flask_slack', 'requests', 'scruffington'],
+    install_requires=['flask', 'requests', 'scruffington', 'slack_client'],
     entry_points={
         'console_scripts': ['morboslack=morboslack:main']
     }
