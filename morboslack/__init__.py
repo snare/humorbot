@@ -2,7 +2,7 @@ import logging
 import json
 import requests
 from scruffy import ConfigFile, PackageFile
-from flask import Flask, request, jsonify
+from flask import Flask, request, jsonify, render_template, redirect
 from slackclient import SlackClient
 from .morbotron import *
 
@@ -30,11 +30,11 @@ app = Flask(__name__)
 
 @app.route('/')
 def index():
-    return 'no.'
+    return render_template('index.html', client_id=str(config.slack_client_id))
 
 
 @app.route('/slack', methods=['POST'])
-def morbo(**kwargs):
+def morbo():
     try:
         token = request.values.get('token')
         if token == config.slack_token:
@@ -265,7 +265,7 @@ def oauth():
     else:
         print("Failed to request OAuth token: {}".format(res))
 
-    return json.dumps(res.json())
+    return redirect('/')
 
 
 def main():
