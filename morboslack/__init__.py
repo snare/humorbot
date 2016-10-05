@@ -12,13 +12,18 @@ Display this help:
 `/morbo help`
 Generate a still image for _do the hustle_:
 `/morbo do the hustle`
+`/morbo image do the hustle`
 Generate a still image for search term _do the hustle_ with a different text overlay:
 `/morbo do the hustle -- do the bartman`
+`/morbo image do the hustle -- do the bartman`
+Generate a selection of still images for _do the hustle_:
+`/morbo images do the hustle`
 Generate a GIF for _do the hustle_:
 `/morbo gif do the hustle`
 Generate a GIF with search term _sure baby, i know it_ but text overlay _shut up baby, i know it_ (because Morbotron has the wrong subtitles so it won't match properly):
 `/morbo gif sure baby, i know it -- shut up baby, i know it`
 """
+MAX_IMAGES = 10
 
 log = logging.getLogger()
 
@@ -105,7 +110,7 @@ def morbo():
                 else:
                     res = {'text': "No match for '{}'".format(text), 'response_type': 'ephemeral'}
             else:
-                if len(tokens) and tokens[0] == 'image':
+                if len(tokens) and tokens[0] in ['image', 'images']:
                     text = ' '.join(tokens[1:])
                 else:
                     text = ' '.join(tokens)
@@ -117,17 +122,56 @@ def morbo():
                     crit = text
                 search_result = search(crit)
                 if len(search_result):
-                    url = image_url(search_result[0]['Episode'], search_result[0]['Timestamp'], text)
-                    res = {
-                        'text': '',
-                        'response_type': 'in_channel',
-                        'attachments': [
-                            {
+                    if tokens[0] == 'images':
+                        attachments = []
+                        for r in search_result[:min(MAX_IMAGES, len(search_result))]:
+                            url = image_url(r['Episode'], r['Timestamp'], text)
+                            attachments.append({
                                 'fallback': text,
-                                'image_url': url
-                            }
-                        ]
-                    }
+                                'image_url': url,
+                                'callback_id': 'image_preview',
+                                'actions': [
+                                    {
+                                        'name': 'send',
+                                        'text': 'Send',
+                                        'type': 'button',
+                                        'style': 'good',
+                                        'value': json.dumps({
+                                            'url': url,
+                                            'text': text,
+                                            'command': command
+                                        })
+                                    }
+                                ]
+                            })
+                        attachments.append({
+                            'callback_id': 'image_preview',
+                            'actions': [
+                                {
+                                    'name': 'cancel',
+                                    'text': 'Cancel',
+                                    'type': 'button',
+                                    'value': 'cancel'
+                                }
+                            ]
+                        })
+                        res = {
+                            'text': '',
+                            'response_type': 'ephemeral',
+                            'attachments': attachments
+                        }
+                    else:
+                        url = image_url(search_result[0]['Episode'], search_result[0]['Timestamp'], text)
+                        res = {
+                            'text': '',
+                            'response_type': 'in_channel',
+                            'attachments': [
+                                {
+                                    'fallback': text,
+                                    'image_url': url
+                                }
+                            ]
+                        }
                 else:
                     res = {'text': "No match for '{}'".format(text), 'response_type': 'ephemeral'}
         else:
