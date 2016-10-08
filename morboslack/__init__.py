@@ -301,7 +301,6 @@ def oauth():
     """
     d = {'code': request.args.get('code'), 'client_id': config.slack_client_id,
          'client_secret': config.slack_client_secret}
-    print(d)
     url = 'https://slack.com/api/oauth.access?client_id={client_id}&client_secret={client_secret}&code={code}'.format(**d)
     res = requests.get(url)
     if res.ok:
