@@ -46,7 +46,7 @@ def morbo():
             command = request.values.get('text')
             url = None
             tokens = command.split()
-            if len(tokens) and tokens[0] == 'help':
+            if len(tokens) and tokens[0] == 'help' or len(tokens) == 0:
                 res = {'text': USAGE.strip()}
             elif len(tokens) and tokens[0] == 'gif':
                 text = ' '.join(tokens[1:])
