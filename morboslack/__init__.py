@@ -308,10 +308,10 @@ def oauth():
         d = res.json()
         print("Successful authentication for user id {} in team ID {} ({})".format(d['user_id'], d['team_id'],
                                                                                    d['team_name']))
+        return redirect('/?installed=true')
     else:
         print("Failed to request OAuth token: {}".format(res))
-
-    return redirect('/?installed=true')
+        return redirect('/?installed=error')
 
 
 def main():

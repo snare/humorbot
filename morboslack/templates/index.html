@@ -56,8 +56,10 @@
         $(function(){
             $('.button-collapse').sideNav();
             $('.parallax').parallax();
-            {% if installed %}
+            {% if installed == 'true' %}
               Materialize.toast('Installed Morboslack!', 4000)
+            {% elif installed == 'error' %}
+              Materialize.toast('Failed to install Morboslack', 4000)
             {% endif %}
         });
     })(jQuery);
