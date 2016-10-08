@@ -305,7 +305,9 @@ def oauth():
     url = 'https://slack.com/api/oauth.access?client_id={client_id}&client_secret={client_secret}&code={code}'.format(**d)
     res = requests.get(url)
     if res.ok:
-        print(res.json())
+        d = res.json()
+        print("Successful authentication for user id {} in team ID {} ({})".format(d['user_id'], d['team_id'],
+                                                                                   d['team_name']))
     else:
         print("Failed to request OAuth token: {}".format(res))
 
