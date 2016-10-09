@@ -27,8 +27,16 @@ Generate a GIF with search term _sure baby, i know it_ but text overlay _shut up
 FRINK_USAGE = """
 Display this help:
 `/frink help`
-Generate a still image for _d'oh_:
-`/frink d'oh`
+Generate a still image for _don't mind if i do_:
+`/frink don't mind if i do`
+`/frink image don't mind if i do`
+Generate a still image for search term _don't mind if i do_ with a different text overlay:
+`/frink don't mind if i do -- snare sux`
+`/frink image don't mind if i do -- snare sux`
+Generate a selection of still images for _don't mind if i do_:
+`/frink images don't mind if i do`
+Generate a GIF for _don't mind if i do_:
+`/frink gif don't mind if i do`
 """
 MAX_IMAGES = 10
 WRAP_WIDTH = 24
