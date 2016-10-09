@@ -44,6 +44,7 @@ def morbo():
         token = request.values.get('token')
         if token == config.slack_token:
             command = request.values.get('text')
+            print("Got request: {}".format(request.values.to_dict()))
             url = None
             tokens = command.split()
             if len(tokens) and tokens[0] == 'help' or len(tokens) == 0:
@@ -177,8 +178,8 @@ def morbo():
         else:
             res = {'text': "Token doesn't match", 'response_type': 'ephemeral'}
     except Exception as e:
-        print(e)
-        res = {'text': 'Error: {}'.format(e), 'response_type': 'ephemeral'}
+        print("Exception processing request: {}".format(e))
+        res = {'text': 'Error processing request.', 'response_type': 'ephemeral'}
 
     print("Returning response: {}".format(res))
 
