@@ -1,13 +1,14 @@
 import logging
 import json
 import requests
+import base64
+import six
+import textwrap
 from scruffy import ConfigFile, PackageFile
 from flask import Flask, request, jsonify, render_template, redirect
 from slackclient import SlackClient
-from .morbotron import *
 
-USAGE = """
-*Usage*
+MORBO_USAGE = """
 Display this help:
 `/morbo help`
 Generate a still image for _do the hustle_:
@@ -23,11 +24,20 @@ Generate a GIF for _do the hustle_:
 Generate a GIF with search term _sure baby, i know it_ but text overlay _shut up baby, i know it_ (because Morbotron has the wrong subtitles so it won't match properly):
 `/morbo gif sure baby, i know it -- shut up baby, i know it`
 """
+FRINK_USAGE = """
+Display this help:
+`/frink help`
+Generate a still image for _d'oh_:
+`/frink d'oh`
+"""
 MAX_IMAGES = 10
+WRAP_WIDTH = 24
+MORBO_BASE_URL = 'https://morbotron.com'
+FRINK_BASE_URL = 'https://frinkiac.com'
 
 log = logging.getLogger()
 
-config = ConfigFile('~/.morboslack.conf', defaults=PackageFile('defaults.yaml'), apply_env=True, env_prefix='MORBO')
+config = ConfigFile('~/.humourbot.conf', defaults=PackageFile('defaults.yaml'), apply_env=True, env_prefix='HBOT')
 config.load()
 
 app = Flask(__name__)
@@ -35,33 +45,67 @@ app = Flask(__name__)
 
 @app.route('/')
 def index():
-    return render_template('index.html', client_id=str(config.slack_client_id), installed=request.args.get('installed'))
+    """
+    Render the home page which allows the user to add the app to their Slack team
+    """
+    return render_template('index.html', morbo_client_id=str(config.morbo_client_id),
+                           frink_client_id=str(config.frink_client_id), installed=request.args.get('installed'))
 
 
 @app.route('/slack', methods=['POST'])
-def morbo():
+def slack():
+    """
+    Handle initial / command from Slack
+    """
     try:
+        # Make sure we got a valid app token
         token = request.values.get('token')
-        if token == config.slack_token:
-            command = request.values.get('text')
-            print("Got request: {}".format(request.values.to_dict()))
+        if token in [config.morbo_token, config.frink_token]:
+            # Check if we were called from the Frinkiac app or the Morbotron app
+            command = request.values.get('command')
+            if 'morbo' in command:
+                command = 'morbo'
+                base = MORBO_BASE_URL
+            elif 'frink' in command:
+                command = 'frink'
+                base = FRINK_BASE_URL
+            else:
+                raise Exception('Unknown command {}'.format(command))
+
+            # Parse the command args
+            args = request.values.get('text')
+            d = request.values.to_dict()
+            print("Got request: {}".format(d))
             url = None
-            tokens = command.split()
+            tokens = args.split()
             if len(tokens) and tokens[0] == 'help' or len(tokens) == 0:
-                res = {'text': USAGE.strip()}
+                # Display usage
+                if command.endswith('morbo'):
+                    res = {'text': MORBO_USAGE.strip()}
+                elif command.endswith('frink'):
+                    res = {'text': FRINK_USAGE.strip()}
             elif len(tokens) and tokens[0] == 'gif':
+                # Reassemble search string
                 text = ' '.join(tokens[1:])
+
+                # Separate search criteria and text overlay if there's --
                 if '--' in text:
                     a = text.split('--')
                     crit = a[0].strip()
                     text = a[1].strip()
                 else:
                     crit = text
-                search_result = search(crit)
+
+                # Perform search
+                search_result = search(crit, base=base)
                 if len(search_result):
-                    context = context_frames(search_result[0]['Episode'], search_result[0]['Timestamp'])
+                    # Retrieve context frames for the gif using the first search result
+                    # Maybe later we'll want to allow the user to select a frame to start with?
+                    context = context_frames(search_result[0]['Episode'], search_result[0]['Timestamp'], base=base)
                     if len(context):
-                        url = gif_url(context[0]['Episode'], context[0]['Timestamp'], context[-1]['Timestamp'], text)
+                        # Generate initial gif using the entire context and return an ephemeral message
+                        url = gif_url(context[0]['Episode'], context[0]['Timestamp'], context[-1]['Timestamp'], text,
+                                      base=base)
                         res = {
                             'text': '',
                             'response_type': 'ephemeral',
@@ -79,6 +123,7 @@ def morbo():
                                             'value': json.dumps({
                                                 'url': url,
                                                 'text': text,
+                                                'args': args,
                                                 'command': command
                                             })
                                         },
@@ -87,13 +132,14 @@ def morbo():
                                             'text': 'Edit',
                                             'type': 'button',
                                             'value': json.dumps({
-                                                'command': command,
+                                                'args': args,
                                                 'text': text,
                                                 'episode': context[0]['Episode'],
                                                 'context': [i['Timestamp'] for i in context],
                                                 'start': context[0]['Timestamp'],
                                                 'end': context[-1]['Timestamp'],
-                                                'show_text': True
+                                                'show_text': True,
+                                                'command': command
                                             })
                                         },
                                         {
@@ -111,22 +157,29 @@ def morbo():
                 else:
                     res = {'text': "No match for '{}'".format(text), 'response_type': 'ephemeral'}
             else:
+                # Reassemble search string
                 if len(tokens) and tokens[0] in ['image', 'images']:
                     text = ' '.join(tokens[1:])
                 else:
                     text = ' '.join(tokens)
+
+                # Separate search criteria and text overlay if there's --
                 if '--' in text:
                     a = text.split('--')
                     crit = a[0].strip()
                     text = a[1].strip()
                 else:
                     crit = text
-                search_result = search(crit)
+
+                # Perform search
+                search_result = search(crit, base=base)
                 if len(search_result):
+                    # If we're presenting multiple options as a preview...
                     if tokens[0] == 'images':
                         attachments = []
+                        # Generate attachments for MAX_IMAGES options
                         for r in search_result[:min(MAX_IMAGES, len(search_result))]:
-                            url = image_url(r['Episode'], r['Timestamp'], text)
+                            url = image_url(r['Episode'], r['Timestamp'], text, base=base)
                             attachments.append({
                                 'fallback': text,
                                 'image_url': url,
@@ -140,11 +193,14 @@ def morbo():
                                         'value': json.dumps({
                                             'url': url,
                                             'text': text,
+                                            'args': args,
                                             'command': command
                                         })
                                     }
                                 ]
                             })
+
+                        # Add a cancel button
                         attachments.append({
                             'callback_id': 'image_preview',
                             'actions': [
@@ -156,24 +212,29 @@ def morbo():
                                 }
                             ]
                         })
+
+                        # Build an ephemeral message for the preview
                         res = {
                             'text': '',
                             'response_type': 'ephemeral',
                             'attachments': attachments
                         }
                     else:
-                        url = image_url(search_result[0]['Episode'], search_result[0]['Timestamp'], text)
+                        # Otherwise, we're just going to immediately return an in_channel message for the first result
+                        url = image_url(search_result[0]['Episode'], search_result[0]['Timestamp'], text, base=base)
                         res = {
                             'text': '',
                             'response_type': 'in_channel',
                             'attachments': [
                                 {
+                                    'title': '@{}: /{} {}'.format(d['user_name'], command, args),
                                     'fallback': text,
                                     'image_url': url
                                 }
                             ]
                         }
                 else:
+                    # Search didn't match anything :()
                     res = {'text': "No match for '{}'".format(text), 'response_type': 'ephemeral'}
         else:
             res = {'text': "Token doesn't match", 'response_type': 'ephemeral'}
@@ -199,7 +260,12 @@ def slacktion():
             res = {'delete_original': True}
         elif action in ['edit', 'start', 'end', 'show_hide_text']:
             data = json.loads(d['actions'][0]['value'])
-            url = gif_url(data['episode'], data['start'], data['end'], data['text'] if data['show_text'] else '')
+            if data['command'] == 'frink':
+                base = FRINK_BASE_URL
+            else:
+                base = MORBO_BASE_URL
+            url = gif_url(data['episode'], data['start'], data['end'], data['text'] if data['show_text'] else '',
+                          base=base)
             attachments = []
 
             # Build an attachment for each frame with a start and end button
@@ -216,7 +282,7 @@ def slacktion():
                 attachments.append({
                     'text': 'Frame {} of episode {}'.format(timestamp, data['episode']),
                     'fallback': data['text'],
-                    'thumb_url': thumb_url(data['episode'], timestamp),
+                    'thumb_url': thumb_url(data['episode'], timestamp, base=base),
                     'callback_id': 'gif_builder',
                     'color': color,
                     'actions': [
@@ -250,6 +316,7 @@ def slacktion():
                         'value': json.dumps({
                             'url': url,
                             'text': data['text'],
+                            'args': data['args'],
                             'command': data['command']
                         })
                     },
@@ -282,7 +349,7 @@ def slacktion():
                 'delete_original': True,
                 'attachments': [
                     {
-                        'title': '@{}: /morbo {}'.format(d['user']['name'], data['command']),
+                        'title': '@{}: /{} {}'.format(d['user']['name'], data['command'], data['args']),
                         'fallback': data['url'],
                         'image_url': data['url'],
                     }
@@ -295,13 +362,20 @@ def slacktion():
     return jsonify(res)
 
 
+@app.route('/oauth/frink')
+@app.route('/oauth/morbo')
 @app.route('/oauth')
 def oauth():
     """
     OAuth endpoint
     """
-    d = {'code': request.args.get('code'), 'client_id': config.slack_client_id,
-         'client_secret': config.slack_client_secret}
+    if request.path.endswith('frink'):
+        client_id = config.frink_client_id
+        client_secret = config.frink_client_secret
+    else:
+        client_id = config.morbo_client_id
+        client_secret = config.morbo_client_secret
+    d = {'code': request.args.get('code'), 'client_id': client_id, 'client_secret': client_secret}
     url = 'https://slack.com/api/oauth.access?client_id={client_id}&client_secret={client_secret}&code={code}'.format(**d)
     res = requests.get(url)
     if res.ok:
@@ -312,6 +386,61 @@ def oauth():
     else:
         print("Failed to request OAuth token: {}".format(res))
         return redirect('/?installed=error')
+
+
+class RequestFailedException(Exception):
+    pass
+
+
+def search(key, base=MORBO_BASE_URL):
+    """
+    Search Morbotron or Frinkiac
+    """
+    res = requests.get('{}/api/search?q={}'.format(base, key))
+    if res.ok:
+        return res.json()
+    else:
+        raise RequestFailedException()
+
+
+def context_frames(episode, timestamp, before=4000, after=4000, base=MORBO_BASE_URL):
+    """
+    Get frames around the given timestamp.
+    """
+    url = '{base}/api/frames/{episode}/{ts}/{before}/{after}'.format(base=base, episode=episode, ts=timestamp,
+                                                                     before=before, after=after)
+    res = requests.get(url)
+    if res.ok:
+        return res.json()
+    else:
+        raise RequestFailedException()
+
+
+def image_url(episode, timestamp, text='', base=MORBO_BASE_URL):
+    """
+    Return a frame URL based on an episode and timestamp.
+    """
+    b64 = base64.b64encode(six.b('\n'.join(textwrap.wrap(text, WRAP_WIDTH)))).decode('latin1')
+    param = '?b64lines={}'.format(b64) if len(text) else ''
+    return '{base}/meme/{episode}/{timestamp}.jpg{param}'.format(base=base, episode=episode,
+                                                                 timestamp=timestamp, param=param)
+
+
+def gif_url(episode, start, end, text='', base=MORBO_BASE_URL):
+    """
+    Return a GIF URL based on an episode and start and end timestamps.
+    """
+    b64 = base64.b64encode(six.b('\n'.join(textwrap.wrap(text, WRAP_WIDTH)))).decode('latin1')
+    param = '?b64lines={}'.format(b64) if len(text) else ''
+    return '{base}/gif/{episode}/{start}/{end}.gif{param}'.format(base=base, episode=episode,
+                                                                  start=start, end=end, param=param)
+
+
+def thumb_url(episode, timestamp, base=MORBO_BASE_URL):
+    """
+    Return a thumbnail URL based on an episode and timestamp.
+    """
+    return '{base}/img/{episode}/{timestamp}/small.jpg'.format(base=base, episode=episode, timestamp=timestamp)
 
 
 def main():

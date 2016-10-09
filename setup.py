@@ -1,19 +1,19 @@
 from setuptools import setup, find_packages
 
 setup(
-    name="morboslack",
+    name="humorbot",
     version="0.1",
     author="snare",
     author_email="snare@ho.ax",
-    description=(""),
+    description=("A slack bot for Morbotron and Frinkiac"),
     license="MIT",
-    keywords="morboslack",
-    url="https://github.com/snare/morboslack",
+    keywords="humorbot",
+    url="https://github.com/snare/humorbot",
     packages=find_packages(),
     install_requires=['flask', 'requests', 'scruffington', 'slack_client'],
-    package_data={'morboslack': ['templates/*', 'defaults.yaml']},
+    package_data={'humorbot': ['templates/*', 'defaults.yaml']},
     entry_points={
-        'console_scripts': ['morboslack=morboslack:main']
+        'console_scripts': ['humorbot=humorbot:main']
     },
     zip_safe=False
 )
