@@ -17,7 +17,7 @@
     <h5>"I'm feeling lucky" mode</h5>
     <p class="light">Executed with just a search string, the <code>/frink</code> and <code>/morbo</code> commands will return the first result for the search string, with that search string used as the text overlay on a still image. For example:</p>
     <div class="row">
-      <div class="col s6 m6">
+      <div class="col s12 m6">
         <div class="card">
           <div class="card-image">
             <img src="http://i.imgur.com/4GvUEwm.png">
@@ -27,7 +27,7 @@
           </div>
         </div>
       </div>
-      <div class="col s6 m6">
+      <div class="col s12 m6">
         <div class="card">
           <div class="card-image">
             <img src="http://i.imgur.com/vQPF6Kq.png">
@@ -42,7 +42,7 @@
 
     <p class="light">If you want to provide different a different text overlay and search string, separate them with <code>--</code>. For example:</p>
     <div class="row">
-      <div class="col s6 m6">
+      <div class="col s12 m6">
         <div class="card">
           <div class="card-image">
             <img src="http://i.imgur.com/vSPFpnU.png">
@@ -52,7 +52,7 @@
           </div>
         </div>
       </div>
-      <div class="col s6 m6">
+      <div class="col s12 m6">
         <div class="card">
           <div class="card-image">
             <img src="http://i.imgur.com/8eY6f6u.png">
@@ -69,7 +69,7 @@
     <h5><code>random</code> mode</h5>
     <p class="light">If <code>random</code> is provided as the first argument in the query, a random frame from the search results will be chosen, and immediately sent to the channel. For example:</p>
     <div class="row">
-      <div class="col s6 m6">
+      <div class="col s12 m6">
         <div class="card">
           <div class="card-image">
             <img src="http://i.imgur.com/hVhk2ZH.png">
@@ -79,7 +79,7 @@
           </div>
         </div>
       </div>
-      <div class="col s6 m6">
+      <div class="col s12 m6">
         <div class="card">
           <div class="card-image">
             <img src="http://i.imgur.com/53n4F5N.png">
@@ -94,7 +94,7 @@
     <h5><code>images</code> mode</h5>
     <p class="light">If <code>images</code> is provided as the first argument in the query, you will be presented with a selection of matching frames in what Slack calls an "ephemeral" message (which is displayed only to you, and not sent to the channel). Each frame has a <code>Send</code> button which, when pressed, will dismiss the ephemeral message and send the selected frame to channel. At the bottom there is a <code>Cancel</code> button which will dismiss the ephemeral message, and nothing will be sent to channel. For example, executing <code>/morbo images seymour</code>:</p>
     <div class="row">
-      <div class="col s6 m6">
+      <div class="col s12 m6">
         <div class="card">
           <div class="card-image">
             <img src="http://i.imgur.com/YcBB2g8.png">
@@ -104,7 +104,7 @@
           </div>
         </div>
       </div>
-      <div class="col s6 m6">
+      <div class="col s12 m6">
         <div class="card">
           <div class="card-image">
             <img src="http://i.imgur.com/NrIhy7n.png">
@@ -119,7 +119,7 @@
     <h5><code>gif</code> mode</h5>
     <p class="light">If <code>gif</code> is provided as the first argument in the query, the first search result will be selected (the same as "I'm feeling lucky" mode) and then a set of context frames (4 seconds either side) will be retrieved. An animated GIF will be built from these frames, and presented in an ephemeral message with <code>Send</code>, <code>Edit</code> and <code>Cancel</code> buttons. For example:</p>
     <div class="row">
-      <div class="col s6 m6">
+      <div class="col s12 m6">
         <div class="card">
           <div class="card-image">
             <img src="http://i.imgur.com/a1u330a.png">
@@ -129,7 +129,7 @@
           </div>
         </div>
       </div>
-      <div class="col s6 m6">
+      <div class="col s12 m6">
         <div class="card">
           <div class="card-image">
             <img src="http://i.imgur.com/WlQ5DGj.png">
@@ -144,7 +144,7 @@
     <p><code>Send</code> will dismiss the ephemeral message and send the GIF to channel as is, <code>Cancel</code> will just dismiss the ephemeral message, sending nothing to channel, and <code>Edit</code> will present a new ephemeral message containing an interface with which the user can edit the GIF parameters. This interface looks like this:
 
     <div class="row">
-      <div class="col s6 m6">
+      <div class="col s12 m6">
         <div class="card">
           <div class="card-image">
             <img src="http://i.imgur.com/Oe3DSUc.png">
@@ -155,7 +155,7 @@
         </div>
       </div>
     </div>
-    <p>The <code>Start frame</code> and <code>End frame</code> buttons on each frame allow you to designate the frames at which to start and end the animated GIF. The currently selected frame range will be highlighted with a green stripe down the left hand side of the frame rows in the editing interface. At the bottom, the <code>Send</code> button will dismiss the editing interface and send the edited GIF to channel, the <code>Cancel</code> button will dismiss the editing interface, sending nothing to channel, and the <code>Hide text</code> will hide the text overlay in the GIF.</p>
+    <p>The <code>Start frame</code> and <code>End frame</code> buttons on each frame allow you to designate the frames at which to start and end the animated GIF. The currently selected frame range will be highlighted with a green stripe down the left hand side of the frame rows in the editing interface. At the bottom, the <code>Send</code> button will dismiss the editing interface and send the edited GIF to channel, the <code>Cancel</code> button will dismiss the editing interface, sending nothing to channel, and the <code>Hide text</code> button will hide the text overlay in the GIF.</p>
   </div>
 </section>
 {% endblock %}
