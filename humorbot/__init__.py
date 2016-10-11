@@ -4,6 +4,7 @@ import requests
 import base64
 import six
 import textwrap
+import random
 from scruffy import ConfigFile, PackageFile
 from flask import Flask, request, jsonify, render_template, redirect
 from slackclient import SlackClient
@@ -68,12 +69,12 @@ def privacy():
     return render_template('privacy.html')
 
 
-@app.route('/help')
-def help():
+@app.route('/usage')
+def usage():
     """
-    Display the help page.
+    Display the usage page.
     """
-    return render_template('help.html')
+    return render_template('usage.html')
 
 
 @app.route('/slack', methods=['POST'])
@@ -182,7 +183,7 @@ def slack():
                     res = {'text': "No match for '{}'".format(text), 'response_type': 'ephemeral'}
             else:
                 # Reassemble search string
-                if len(tokens) and tokens[0] in ['image', 'images']:
+                if len(tokens) and tokens[0] in ['image', 'images', 'random']:
                     text = ' '.join(tokens[1:])
                 else:
                     text = ' '.join(tokens)
@@ -245,14 +246,15 @@ def slack():
                         }
                     else:
                         # Otherwise, we're just going to immediately return an in_channel message for the first result
-                        url = image_url(search_result[0]['Episode'], search_result[0]['Timestamp'], text, base=base)
+                        r = random.choice(search_result) if tokens[0] == 'random' else search_result[0]
+                        url = image_url(r['Episode'], r['Timestamp'], text, base=base)
                         res = {
                             'text': '',
                             'response_type': 'in_channel',
                             'attachments': [
                                 {
                                     'title': '@{}: /{} {}'.format(d['user_name'], command, args),
-                                    'fallback': text,
+                                    'fallback': '@{}: /{} {} | {}'.format(d['user_name'], command, args, url),
                                     'image_url': url
                                 }
                             ]
@@ -374,7 +376,8 @@ def slacktion():
                 'attachments': [
                     {
                         'title': '@{}: /{} {}'.format(d['user']['name'], data['command'], data['args']),
-                        'fallback': data['url'],
+                        'fallback': '@{}: /{} {} | {}'.format(d['user']['name'], data['command'], data['args'],
+                                                              data['url']),
                         'image_url': data['url'],
                     }
                 ]

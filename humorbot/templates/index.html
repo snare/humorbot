@@ -1,17 +1,17 @@
 {% extends "base.html" %}
 
 {% block content %}
-  <div class="section no-pad-bot" id="index-banner">
-    <div class="container">
-      <br><br>
-      <h1 class="header center teal-text">humorbot</h1>
-      <div class="row center">
-        <h5 class="header col s12 light">Frinkiac and Morbotron apps for Slack.</h5>
+<section id="main">
+  <div class="container">
+    <div class="section no-pad-bot" id="index-banner">
+      <div class="container">
+        <br><br>
+        <h1 class="header center teal-text">humorbot</h1>
+        <div class="row center">
+          <h5 class="header col s12 light">Frinkiac and Morbotron apps for Slack.</h5>
+        </div>
       </div>
     </div>
-  </div>
-
-  <div class="container">
     <div class="row">
       <div class="col s12 m6">
         <div class="card">
@@ -22,8 +22,8 @@
           <div class="card-content">
             <img class="responsive-img" src="http://i.imgur.com/bD6Wgpo.png">
           </div>
-          <div class="card-action">
-            <a href="https://slack.com/oauth/authorize?scope=commands&client_id={{ frink_client_id }}"><img alt="Add to Slack" height="40" width="139" src="https://platform.slack-edge.com/img/add_to_slack.png" srcset="https://platform.slack-edge.com/img/add_to_slack.png 1x, https://platform.slack-edge.com/img/add_to_slack@2x.png 2x" /></a>
+          <div class="card-action valign-wrapper">
+            <a href="https://slack.com/oauth/authorize?scope=commands&client_id={{ frink_client_id }}"><img class="valign" alt="Add to Slack" height="40" width="139" src="https://platform.slack-edge.com/img/add_to_slack.png" srcset="https://platform.slack-edge.com/img/add_to_slack.png 1x, https://platform.slack-edge.com/img/add_to_slack@2x.png 2x" /></a>
           </div>
         </div>
       </div>
@@ -36,15 +36,15 @@
           <div class="card-content">
             <img class="responsive-img" src="http://i.imgur.com/MRbiPE5.png">
           </div>
-          <div class="card-action">
-            <a href="https://slack.com/oauth/authorize?scope=commands&client_id={{ morbo_client_id }}"><img alt="Add to Slack" height="40" width="139" src="https://platform.slack-edge.com/img/add_to_slack.png" srcset="https://platform.slack-edge.com/img/add_to_slack.png 1x, https://platform.slack-edge.com/img/add_to_slack@2x.png 2x" /></a>
+          <div class="card-action valign-wrapper">
+            <a href="https://slack.com/oauth/authorize?scope=commands&client_id={{ morbo_client_id }}"><img class="valign" alt="Add to Slack" height="40" width="139" src="https://platform.slack-edge.com/img/add_to_slack.png" srcset="https://platform.slack-edge.com/img/add_to_slack.png 1x, https://platform.slack-edge.com/img/add_to_slack@2x.png 2x" /></a>
           </div>
         </div>
       </div>
     </div>
-
     <div class="row">
-      <p class="light"><b>Note:</b> snare did not build <a href="http://morbotron.com">Morbotron</a> or <a href="http://frinkiac.com">Frinkiac</a>, just the Slack apps. Please direct all enquiries about (and internet hugs related to) <a href="http://morbotron.com">Morbotron</a> and <a href="http://frinkiac.com">Frinkiac</a> to their developers - the real heroes of this story.
+      <p class="light"><b>Note:</b> snare did not build <a href="http://morbotron.com">Morbotron</a> or <a href="http://frinkiac.com">Frinkiac</a>, just the Slack apps. Please direct all enquiries about (and internet hugs related to) <a href="http://morbotron.com">Morbotron</a> and <a href="http://frinkiac.com">Frinkiac</a> to their developers - the real heroes of this story. However, if you have feature requests, comments, insults, death threats, etc. for the Slack apps, feel free to open an issue on <a href="https://github.com/snare/humorbot/issues">GitHub</a>. If, for any reason, you're not completely satisfied, I hate you.
     </div>
   </div>
+</section>
 {% endblock %}
