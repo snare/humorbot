@@ -1,24 +1,6 @@
+{% extends "base.html" %}
 
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
-  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1.0"/>
-  <title>humorbot</title>
-  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
-  <link href="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.97.7/css/materialize.min.css" type="text/css" rel="stylesheet" media="screen,projection"/>
-  <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.6.3/css/font-awesome.min.css" type="text/css" rel="stylesheet"/>
-</head>
-<body>
-  <nav class="teal" role="navigation">
-    <div class="nav-wrapper container"><a id="logo-container" href="#" class="brand-logo">humorbot</a>
-      <ul class="right hide-on-med-and-down">
-        <li><a href="https://twitter.com/snare"><i class="fa fa-twitter small"></i></a></li>
-        <li><a href="https://github.com/snare/humorbot"><i class="fa fa-github small"></i></a></li>
-      </ul>
-    </div>
-  </nav>
-
+{% block content %}
   <div class="section no-pad-bot" id="index-banner">
     <div class="container">
       <br><br>
@@ -26,60 +8,43 @@
       <div class="row center">
         <h5 class="header col s12 light">Frinkiac and Morbotron apps for Slack.</h5>
       </div>
-
     </div>
   </div>
+
   <div class="container">
-    <div class="section">
-      <div class="row">
-        <div class="col s12 m6">
-          <h5 class="center">Frinkiac</h5>
-          <div class="center"><a href="https://slack.com/oauth/authorize?scope=commands&client_id={{ frink_client_id }}"><img alt="Add to Slack" height="40" width="139" src="https://platform.slack-edge.com/img/add_to_slack.png" srcset="https://platform.slack-edge.com/img/add_to_slack.png 1x, https://platform.slack-edge.com/img/add_to_slack@2x.png 2x" /></a></div>
-          <p class="light"><a href="http://frinkiac.com">Frinkiac</a> is a neat app for generating image memes and animated GIFs from The Simpsons. The Frinkiac Slack app provides a mechanism for querying Frinkiac from within the <a href="https://slack.com">Slack</a> client.</p>
+    <div class="row">
+      <div class="col s12 m6">
+        <div class="card">
+          <div class="card-content">
+            <h5>Frinkiac</h5>
+            <p class="light"><a href="http://frinkiac.com">Frinkiac</a> is a neat app for generating image memes and animated GIFs from The Simpsons. The Frinkiac Slack app provides a mechanism for querying Frinkiac from within the <a href="https://slack.com">Slack</a> client.</p>
+          </div>
+          <div class="card-content">
+            <img class="responsive-img" src="http://i.imgur.com/bD6Wgpo.png">
+          </div>
+          <div class="card-action">
+            <a href="https://slack.com/oauth/authorize?scope=commands&client_id={{ frink_client_id }}"><img alt="Add to Slack" height="40" width="139" src="https://platform.slack-edge.com/img/add_to_slack.png" srcset="https://platform.slack-edge.com/img/add_to_slack.png 1x, https://platform.slack-edge.com/img/add_to_slack@2x.png 2x" /></a>
+          </div>
         </div>
-        <div class="col s12 m6">
-          <h5 class="center">Morbotron</h5>
-          <div class="center"><a href="https://slack.com/oauth/authorize?scope=commands&client_id={{ morbo_client_id }}"><img alt="Add to Slack" height="40" width="139" src="https://platform.slack-edge.com/img/add_to_slack.png" srcset="https://platform.slack-edge.com/img/add_to_slack.png 1x, https://platform.slack-edge.com/img/add_to_slack@2x.png 2x" /></a></div>
-          <p class="light"><a href="http://morbotron.com">Morbotron</a> is like Frinkiac, but for Futurama. The Morbotron Slack app provides a mechanism for querying Morbotron from within the <a href="https://slack.com">Slack</a> client.</p>
+      </div>
+      <div class="col s12 m6">
+        <div class="card">
+          <div class="card-content">
+            <h5>Morbotron</h5>
+            <p class="light"><a href="http://morbotron.com">Morbotron</a> is like Frinkiac, but for Futurama. The Morbotron Slack app provides a mechanism for querying Morbotron from within the <a href="https://slack.com">Slack</a> client.</p><br/>
+          </div>
+          <div class="card-content">
+            <img class="responsive-img" src="http://i.imgur.com/MRbiPE5.png">
+          </div>
+          <div class="card-action">
+            <a href="https://slack.com/oauth/authorize?scope=commands&client_id={{ morbo_client_id }}"><img alt="Add to Slack" height="40" width="139" src="https://platform.slack-edge.com/img/add_to_slack.png" srcset="https://platform.slack-edge.com/img/add_to_slack.png 1x, https://platform.slack-edge.com/img/add_to_slack@2x.png 2x" /></a>
+          </div>
         </div>
-    </div>
-    <div class="row">
-      <div class="col s12 m6">
-        <img class="responsive-img" src="http://i.imgur.com/XYM1uO1.png">
-      </div>
-      <div class="col s12 m6">
-        <img class="responsive-img" src="http://i.imgur.com/7yG3Oda.png">
       </div>
     </div>
+
     <div class="row">
-      <div class="col s12 m6">
-        <img class="responsive-img" src="http://i.imgur.com/7Rsvsxs.png">
-      </div>
-      <div class="col s12 m6">
-        <img class="responsive-img" src="http://i.imgur.com/rJOG50K.png">
-      </div>
-    </div>
-    <div class="row">
-      <p class="light"><b>Note:</b> snare did not build <a href="http://morbotron.com">Morbotron</a> or <a href="http://frinkiac.com">Frinkiac</a>, just the Slack apps. Please direct all enquiries about <a href="http://morbotron.com">Morbotron</a> or <a href="http://frinkiac.com">Frinkiac</a> to their developers.
+      <p class="light"><b>Note:</b> snare did not build <a href="http://morbotron.com">Morbotron</a> or <a href="http://frinkiac.com">Frinkiac</a>, just the Slack apps. Please direct all enquiries about (and internet hugs related to) <a href="http://morbotron.com">Morbotron</a> and <a href="http://frinkiac.com">Frinkiac</a> to their developers - the real heroes of this story.
     </div>
   </div>
-
-  <script src="https://code.jquery.com/jquery-2.1.1.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.97.7/js/materialize.min.js"></script>
-  <script>
-    (function($){
-        $(function(){
-            $('.button-collapse').sideNav();
-            $('.parallax').parallax();
-            {% if installed == 'true' %}
-              Materialize.toast('Installed!', 4000)
-            {% elif installed == 'error' %}
-              Materialize.toast('Failed to install', 4000)
-            {% endif %}
-        });
-    })(jQuery);
-  </script>
-
-  </body>
-</html>
-
+{% endblock %}

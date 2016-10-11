@@ -60,6 +60,22 @@ def index():
                            frink_client_id=str(config.frink_client_id), installed=request.args.get('installed'))
 
 
+@app.route('/privacy')
+def privacy():
+    """
+    Display the privacy policy page.
+    """
+    return render_template('privacy.html')
+
+
+@app.route('/help')
+def help():
+    """
+    Display the help page.
+    """
+    return render_template('help.html')
+
+
 @app.route('/slack', methods=['POST'])
 def slack():
     """
@@ -456,4 +472,4 @@ def main():
 
 
 if __name__ == '__main__':
-    main()
+    app.run(debug=True)

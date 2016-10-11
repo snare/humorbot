@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1.0"/>
+  <title>humorbot</title>
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.97.7/css/materialize.min.css" type="text/css" rel="stylesheet" media="screen,projection"/>
+  <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.6.3/css/font-awesome.min.css" type="text/css" rel="stylesheet"/>
+  <style>
+    body {
+      display: flex;
+      min-height: 100vh;
+      flex-direction: column;
+    }
+
+    main {
+      flex: 1 0 auto;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <nav class="teal" role="navigation">
+      <div class="nav-wrapper container">
+        <a id="logo-container" href="/" class="brand-logo">humorbot</a>
+        <ul class="right hide-on-med-and-down">
+          <li><a href="/#help"><i class="fa fa-question small"></i></a></li>
+          <li><a href="/privacy"><i class="fa fa-lock small"></i></a></li>
+          <li><a href="https://twitter.com/snare"><i class="fa fa-twitter small"></i></a></li>
+          <li><a href="https://github.com/snare/humorbot"><i class="fa fa-github small"></i></a></li>
+        </ul>
+      </div>
+    </nav>
+  </header>
+
+  <main>
+
+  {% block content %}{% endblock %}
+
+  </main>
+
+  <footer class="page-footer teal">
+    <div class="container">
+      <div class="row">
+        <div class="col l6 s12">
+          <p class="grey-text text-lighten-4">Anecdote accepted. Snappy comeback not found.</p>
+        </div>
+        <div class="col l4 offset-l2 s12">
+          <ul>
+            <li><a class="grey-text text-lighten-3" href="/">Home</a></li>
+            <li><a class="grey-text text-lighten-3" href="/#help">Help</a></li>
+            <li><a class="grey-text text-lighten-3" href="/privacy">Privacy</a></li>
+            <li><a class="grey-text text-lighten-3" href="https://twitter.com/snare">Twitter</a></li>
+            <li><a class="grey-text text-lighten-3" href="https://github.com/snare/humorbot">Source</a></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+    <div class="footer-copyright">
+      <div class="container">
+        <div class="row">
+          <div class="col l6 s12">© 2016 snare</div>
+          <div class="col l4 offset-l2 s12">
+            <a class="grey-text text-lighten-3" href="javascript:console.log(atob('dGh4IHNoYXd0eQ=='))">&#960;</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <script src="https://code.jquery.com/jquery-2.1.1.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.97.7/js/materialize.min.js"></script>
+  <script>
+    (function($){
+        $(function(){
+            $('.button-collapse').sideNav();
+            $('.parallax').parallax();
+            {% if installed == 'true' %}
+              Materialize.toast('Installed!', 4000)
+            {% elif installed == 'error' %}
+              Materialize.toast('Failed to install', 4000)
+            {% endif %}
+        });
+    })(jQuery);
+  </script>
+
+</body>
+</html>
+
