@@ -447,7 +447,7 @@ def image_url(episode, timestamp, text='', base=MORBO_BASE_URL):
     """
     Return a frame URL based on an episode and timestamp.
     """
-    b64 = base64.b64encode(six.b('\n'.join(textwrap.wrap(text, WRAP_WIDTH)))).decode('latin1')
+    b64 = base64.b64encode(six.b('\n'.join(textwrap.wrap(text, WRAP_WIDTH))), '-_').decode('latin1')
     param = '?b64lines={}'.format(b64) if len(text) else ''
     return '{base}/meme/{episode}/{timestamp}.jpg{param}'.format(base=base, episode=episode,
                                                                  timestamp=timestamp, param=param)
@@ -457,7 +457,7 @@ def gif_url(episode, start, end, text='', base=MORBO_BASE_URL):
     """
     Return a GIF URL based on an episode and start and end timestamps.
     """
-    b64 = base64.b64encode(six.b('\n'.join(textwrap.wrap(text, WRAP_WIDTH)))).decode('latin1')
+    b64 = base64.b64encode(six.b('\n'.join(textwrap.wrap(text, WRAP_WIDTH))), '-_').decode('latin1')
     param = '?b64lines={}'.format(b64) if len(text) else ''
     return '{base}/gif/{episode}/{start}/{end}.gif{param}'.format(base=base, episode=episode,
                                                                   start=start, end=end, param=param)
