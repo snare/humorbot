@@ -18,6 +18,8 @@ Generate a still image for _do the hustle_:
 Generate a still image for search term _do the hustle_ with a different text overlay:
 `/morbo do the hustle -- do the bartman`
 `/morbo image do the hustle -- do the bartman`
+Generate a still image for the search term _do the hustle_ with no text overlay:
+`/morbo do the hustle --`
 Generate a selection of still images for _do the hustle_:
 `/morbo images do the hustle`
 Generate a GIF for _do the hustle_:
@@ -34,6 +36,8 @@ Generate a still image for _don't mind if i do_:
 Generate a still image for search term _don't mind if i do_ with a different text overlay:
 `/frink don't mind if i do -- snare sux`
 `/frink image don't mind if i do -- snare sux`
+Generate a still image for the search term _don't mind if i do_ with no text overlay:
+`/morbo don't mind if i do --`
 Generate a selection of still images for _don't mind if i do_:
 `/frink images don't mind if i do`
 Generate a GIF for _don't mind if i do_:
