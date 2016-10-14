@@ -298,39 +298,6 @@ def slacktion():
                           base=base)
             attachments = []
 
-            # Build an attachment for each frame with a start and end button
-            for timestamp in data['context']:
-                start_data = dict(data)
-                start_data['start'] = timestamp
-                end_data = dict(data)
-                end_data['end'] = timestamp
-                i = data['context'].index(timestamp)
-                if i >= data['context'].index(data['start']) and i <= data['context'].index(data['end']):
-                    color = 'good'
-                else:
-                    color = ''
-                attachments.append({
-                    'text': 'Frame {} of episode {}'.format(timestamp, data['episode']),
-                    'fallback': data['text'],
-                    'thumb_url': thumb_url(data['episode'], timestamp, base=base),
-                    'callback_id': 'gif_builder',
-                    'color': color,
-                    'actions': [
-                        {
-                            'name': 'start',
-                            'text': 'Start frame',
-                            'type': 'button',
-                            'value': json.dumps(start_data)
-                        },
-                        {
-                            'name': 'end',
-                            'text': 'End frame',
-                            'type': 'button',
-                            'value': json.dumps(end_data)
-                        },
-                    ]
-                })
-
             # Build an attachment with send, show/hide text and cancel buttons
             show_hide_data = dict(data)
             show_hide_data['show_text'] = not show_hide_data['show_text']
@@ -364,6 +331,39 @@ def slacktion():
                     },
                 ]
             })
+
+            # Build an attachment for each frame with a start and end button
+            for timestamp in data['context']:
+                start_data = dict(data)
+                start_data['start'] = timestamp
+                end_data = dict(data)
+                end_data['end'] = timestamp
+                i = data['context'].index(timestamp)
+                if i >= data['context'].index(data['start']) and i <= data['context'].index(data['end']):
+                    color = 'good'
+                else:
+                    color = ''
+                attachments.append({
+                    'text': 'Frame {} of episode {}'.format(timestamp, data['episode']),
+                    'fallback': data['text'],
+                    'thumb_url': thumb_url(data['episode'], timestamp, base=base),
+                    'callback_id': 'gif_builder',
+                    'color': color,
+                    'actions': [
+                        {
+                            'name': 'start',
+                            'text': 'Start frame',
+                            'type': 'button',
+                            'value': json.dumps(start_data)
+                        },
+                        {
+                            'name': 'end',
+                            'text': 'End frame',
+                            'type': 'button',
+                            'value': json.dumps(end_data)
+                        },
+                    ]
+                })
 
             # Build response
             res = {
