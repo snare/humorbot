@@ -42,6 +42,8 @@ Generate a selection of still images for _don't mind if i do_:
 `/frink images don't mind if i do`
 Generate a GIF for _don't mind if i do_:
 `/frink gif don't mind if i do`
+Generate a GIF for _don't mind if i do_ with a different text overlay:
+`/frink gif don't mind if i do -- do mind if I don't`
 """
 MAX_IMAGES = 10
 WRAP_WIDTH = 24
