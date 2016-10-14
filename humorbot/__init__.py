@@ -5,8 +5,9 @@ import base64
 import six
 import textwrap
 import random
+import os
 from scruffy import ConfigFile, PackageFile
-from flask import Flask, request, jsonify, render_template, redirect
+from flask import Flask, request, jsonify, render_template, redirect, send_from_directory
 from slackclient import SlackClient
 
 MORBO_USAGE = """
@@ -65,6 +66,12 @@ def index():
     """
     return render_template('index.html', morbo_client_id=str(config.morbo_client_id),
                            frink_client_id=str(config.frink_client_id), installed=request.args.get('installed'))
+
+
+@app.route('/favicon.ico')
+def favicon():
+    return send_from_directory(os.path.join(app.root_path, 'static'),
+                               'favicon.ico', mimetype='image/vnd.microsoft.icon')
 
 
 @app.route('/privacy')
