@@ -294,107 +294,110 @@ def slacktion():
     try:
         d = json.loads(request.form.get('payload'))
         print('Got action with payload: {}'.format(d))
-        action = d['actions'][0]['name']
-        if action == 'cancel':
-            res = {'delete_original': True}
-        elif action in ['edit', 'start', 'end', 'show_hide_text']:
-            data = json.loads(d['actions'][0]['value'])
-            if data['command'] == 'frink':
-                base = FRINK_BASE_URL
-            else:
-                base = MORBO_BASE_URL
-            url = gif_url(data['episode'], data['start'], data['end'], data['text'] if data['show_text'] else '',
-                          base=base)
-            attachments = []
-
-            # Build an attachment with send, show/hide text and cancel buttons
-            show_hide_data = dict(data)
-            show_hide_data['show_text'] = not show_hide_data['show_text']
-            attachments.append({
-                'fallback': data['text'],
-                'image_url': url,
-                'callback_id': 'gif_builder',
-                'actions': [
-                    {
-                        'name': 'send',
-                        'text': 'Send',
-                        'type': 'button',
-                        'value': json.dumps({
-                            'url': url,
-                            'text': data['text'],
-                            'args': data['args'],
-                            'command': data['command']
-                        })
-                    },
-                    {
-                        'name': 'show_hide_text',
-                        'text': '{} text'.format('Hide' if data['show_text'] else 'Show'),
-                        'type': 'button',
-                        'value': json.dumps(show_hide_data)
-                    },
-                    {
-                        'name': 'cancel',
-                        'text': 'Cancel',
-                        'type': 'button',
-                        'value': 'cancel'
-                    },
-                ]
-            })
-
-            # Build an attachment for each frame with a start and end button
-            for timestamp in data['context']:
-                start_data = dict(data)
-                start_data['start'] = timestamp
-                end_data = dict(data)
-                end_data['end'] = timestamp
-                i = data['context'].index(timestamp)
-                if i >= data['context'].index(data['start']) and i <= data['context'].index(data['end']):
-                    color = 'good'
+        if d['token'] in [config.morbo_token, config.frink_token]:
+            action = d['actions'][0]['name']
+            if action == 'cancel':
+                res = {'delete_original': True}
+            elif action in ['edit', 'start', 'end', 'show_hide_text']:
+                data = json.loads(d['actions'][0]['value'])
+                if data['command'] == 'frink':
+                    base = FRINK_BASE_URL
                 else:
-                    color = ''
+                    base = MORBO_BASE_URL
+                url = gif_url(data['episode'], data['start'], data['end'], data['text'] if data['show_text'] else '',
+                              base=base)
+                attachments = []
+
+                # Build an attachment with send, show/hide text and cancel buttons
+                show_hide_data = dict(data)
+                show_hide_data['show_text'] = not show_hide_data['show_text']
                 attachments.append({
-                    'text': 'Frame {} of episode {}'.format(timestamp, data['episode']),
                     'fallback': data['text'],
-                    'thumb_url': thumb_url(data['episode'], timestamp, base=base),
+                    'image_url': url,
                     'callback_id': 'gif_builder',
-                    'color': color,
                     'actions': [
                         {
-                            'name': 'start',
-                            'text': 'Start frame',
+                            'name': 'send',
+                            'text': 'Send',
                             'type': 'button',
-                            'value': json.dumps(start_data)
+                            'value': json.dumps({
+                                'url': url,
+                                'text': data['text'],
+                                'args': data['args'],
+                                'command': data['command']
+                            })
                         },
                         {
-                            'name': 'end',
-                            'text': 'End frame',
+                            'name': 'show_hide_text',
+                            'text': '{} text'.format('Hide' if data['show_text'] else 'Show'),
                             'type': 'button',
-                            'value': json.dumps(end_data)
+                            'value': json.dumps(show_hide_data)
+                        },
+                        {
+                            'name': 'cancel',
+                            'text': 'Cancel',
+                            'type': 'button',
+                            'value': 'cancel'
                         },
                     ]
                 })
 
-            # Build response
-            res = {
-                'text': '',
-                'response_type': 'ephemeral',
-                'attachments': attachments
-            }
-        elif action == 'send':
-            data = json.loads(d['actions'][0]['value'])
-            res = {
-                'text': '',
-                'response_type': 'in_channel',
-                'delete_original': True,
-                'attachments': [
-                    {
-                        'title': '@{}: /{} {}'.format(d['user']['name'], data['command'], data['args']),
-                        'fallback': '@{}: /{} {} | {}'.format(d['user']['name'], data['command'], data['args'],
-                                                              data['url']),
-                        'image_url': data['url'],
-                    }
-                ]
-            }
+                # Build an attachment for each frame with a start and end button
+                for timestamp in data['context']:
+                    start_data = dict(data)
+                    start_data['start'] = timestamp
+                    end_data = dict(data)
+                    end_data['end'] = timestamp
+                    i = data['context'].index(timestamp)
+                    if i >= data['context'].index(data['start']) and i <= data['context'].index(data['end']):
+                        color = 'good'
+                    else:
+                        color = ''
+                    attachments.append({
+                        'text': 'Frame {} of episode {}'.format(timestamp, data['episode']),
+                        'fallback': data['text'],
+                        'thumb_url': thumb_url(data['episode'], timestamp, base=base),
+                        'callback_id': 'gif_builder',
+                        'color': color,
+                        'actions': [
+                            {
+                                'name': 'start',
+                                'text': 'Start frame',
+                                'type': 'button',
+                                'value': json.dumps(start_data)
+                            },
+                            {
+                                'name': 'end',
+                                'text': 'End frame',
+                                'type': 'button',
+                                'value': json.dumps(end_data)
+                            },
+                        ]
+                    })
+
+                # Build response
+                res = {
+                    'text': '',
+                    'response_type': 'ephemeral',
+                    'attachments': attachments
+                }
+            elif action == 'send':
+                data = json.loads(d['actions'][0]['value'])
+                res = {
+                    'text': '',
+                    'response_type': 'in_channel',
+                    'delete_original': True,
+                    'attachments': [
+                        {
+                            'title': '@{}: /{} {}'.format(d['user']['name'], data['command'], data['args']),
+                            'fallback': '@{}: /{} {} | {}'.format(d['user']['name'], data['command'], data['args'],
+                                                                  data['url']),
+                            'image_url': data['url'],
+                        }
+                    ]
+                }
+        else:
+            res = {'text': "Token doesn't match", 'response_type': 'ephemeral'}
     except Exception as e:
         print(e)
         res = {'text': "Error processing action", 'response_type': 'ephemeral'}
