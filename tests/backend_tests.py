@@ -1,5 +1,5 @@
 import nose
-from morboslack.morbotron import *
+from humorbot import *
 
 
 def setup():
@@ -32,3 +32,7 @@ def test_thumb_url():
 def test_gif_url():
     assert gif_url('S09E06', 729604, 729605) == 'https://morbotron.com/gif/S09E06/729604/729605.gif'
     assert gif_url('S09E06', 729604, 729605, 'xxx') == 'https://morbotron.com/gif/S09E06/729604/729605.gif?b64lines=eHh4'
+
+
+def test_caption_url():
+    assert caption_url('S09E06', 729604) == 'https://morbotron.com/caption?e=S09E06&t=729604'

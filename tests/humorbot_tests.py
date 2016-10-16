@@ -1,6 +1,6 @@
 import nose
 import json
-from morboslack import morbo, app
+from humorbot import *
 
 
 def setup():
