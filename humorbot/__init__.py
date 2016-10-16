@@ -111,7 +111,7 @@ def slack():
                 raise Exception('Unknown command {}'.format(command))
 
             # Parse the command args
-            args = request.values.get('text')
+            args = request.values.get('text').encode('utf-8')
             d = request.values.to_dict()
             print("Got request: {}".format(d))
             url = None
