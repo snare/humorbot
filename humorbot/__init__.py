@@ -418,17 +418,25 @@ def oauth():
     else:
         client_id = config.morbo_client_id
         client_secret = config.morbo_client_secret
-    d = {'code': request.args.get('code'), 'client_id': client_id, 'client_secret': client_secret}
-    url = 'https://slack.com/api/oauth.access?client_id={client_id}&client_secret={client_secret}&code={code}'.format(**d)
-    res = requests.get(url)
-    if res.ok:
-        d = res.json()
-        print("Successful authentication for user id {} in team ID {} ({})".format(d['user_id'], d['team_id'],
-                                                                                   d['team_name']))
-        return redirect('/?installed=true')
+    if request.values.get('error'):
+        if request.values.get('error') == 'access_denied':
+            print("User canceled authorisation")
+        else:
+            print("An error occurred: {}".format(request.values.get('error')))
+        return redirect('/')
     else:
-        print("Failed to request OAuth token: {}".format(res))
-        return redirect('/?installed=error')
+        d = {'code': request.args.get('code'), 'client_id': client_id, 'client_secret': client_secret}
+        url = 'https://slack.com/api/oauth.access?client_id={client_id}&client_secret={client_secret}&code={code}'.format(**d)
+        res = requests.get(url)
+        if res.ok:
+            d = res.json()
+            print("Successful authentication for user id {} in team ID {} ({})".format(d['user_id'], d['team_id'],
+                                                                                       d['team_name']))
+            return redirect('/?installed=true')
+        else:
+            print("Failed to request OAuth token: {}".format(res))
+            return redirect('/?installed=error')
+
 
 
 class RequestFailedException(Exception):
@@ -463,7 +471,7 @@ def image_url(episode, timestamp, text='', base=MORBO_BASE_URL):
     """
     Return a frame URL based on an episode and timestamp.
     """
-    b64 = base64.b64encode(six.b('\n'.join(textwrap.wrap(text, WRAP_WIDTH))), '-_').decode('latin1')
+    b64 = base64.b64encode(six.b('\n'.join(textwrap.wrap(text, WRAP_WIDTH))), six.b('-_')).decode('latin1')
     param = '?b64lines={}'.format(b64) if len(text) else ''
     return '{base}/meme/{episode}/{timestamp}.jpg{param}'.format(base=base, episode=episode,
                                                                  timestamp=timestamp, param=param)
@@ -473,7 +481,7 @@ def gif_url(episode, start, end, text='', base=MORBO_BASE_URL):
     """
     Return a GIF URL based on an episode and start and end timestamps.
     """
-    b64 = base64.b64encode(six.b('\n'.join(textwrap.wrap(text, WRAP_WIDTH))), '-_').decode('latin1')
+    b64 = base64.b64encode(six.b('\n'.join(textwrap.wrap(text, WRAP_WIDTH))), six.b('-_')).decode('latin1')
     param = '?b64lines={}'.format(b64) if len(text) else ''
     return '{base}/gif/{episode}/{start}/{end}.gif{param}'.format(base=base, episode=episode,
                                                                   start=start, end=end, param=param)
@@ -484,6 +492,13 @@ def thumb_url(episode, timestamp, base=MORBO_BASE_URL):
     Return a thumbnail URL based on an episode and timestamp.
     """
     return '{base}/img/{episode}/{timestamp}/small.jpg'.format(base=base, episode=episode, timestamp=timestamp)
+
+
+def caption_url(episode, timestamp, base=MORBO_BASE_URL):
+    """
+    Return the caption data for a specific timestamp.
+    """
+    return '{base}/caption?e={episode}&t={timestamp}'.format(base=base, episode=episode, timestamp=timestamp)
 
 
 def main():
