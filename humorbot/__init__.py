@@ -304,8 +304,8 @@ def slacktion():
                     base = FRINK_BASE_URL
                 else:
                     base = MORBO_BASE_URL
-                url = gif_url(data['episode'], data['start'], data['end'], data['text'] if data['show_text'] else '',
-                              base=base)
+                url = gif_url(data['episode'], data['start'], data['end'],
+                              data['text'].encode('utf-8') if data['show_text'] else '', base=base)
                 attachments = []
 
                 # Build an attachment with send, show/hide text and cancel buttons
@@ -389,9 +389,9 @@ def slacktion():
                     'delete_original': True,
                     'attachments': [
                         {
-                            'title': '@{}: /{} {}'.format(d['user']['name'], data['command'], data['args']),
-                            'fallback': '@{}: /{} {} | {}'.format(d['user']['name'], data['command'], data['args'],
-                                                                  data['url']),
+                            'title': u'@{}: /{} {}'.format(d['user']['name'], data['command'], data['args']),
+                            'fallback': u'@{}: /{} {} | {}'.format(d['user']['name'], data['command'], data['args'],
+                                                                   data['url']),
                             'image_url': data['url'],
                         }
                     ]
@@ -401,6 +401,7 @@ def slacktion():
     except Exception as e:
         print(e)
         res = {'text': "Error processing action", 'response_type': 'ephemeral'}
+        raise
 
     return jsonify(res)
 
@@ -436,7 +437,6 @@ def oauth():
         else:
             print("Failed to request OAuth token: {}".format(res))
             return redirect('/?installed=error')
-
 
 
 class RequestFailedException(Exception):
