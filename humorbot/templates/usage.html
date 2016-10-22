@@ -16,7 +16,7 @@
     <p class="light">The <code>/morbo help</code> and <code>/frink help</code> commands will display usage information.</p>
 
     <h5>"I'm feeling lucky" mode</h5>
-    <p class="light">Executed with just a search string, the <code>/frink</code> and <code>/morbo</code> commands will return the first result for the search string, with that search string used as the text overlay on a still image. For example:</p>
+    <p class="light">Executed with just a search string, the <code>/frink</code> and <code>/morbo</code> commands will return the first result for the search string, and the dialogue will be used as a text overlay. For example:</p>
     <div class="row">
       <div class="col s12 m6">
         <div class="card">
@@ -24,7 +24,7 @@
             <img src="https://i.imgur.com/4GvUEwm.png">
           </div>
           <div class="card-action valign-wrapper">
-            <p class="light"><code>/frink grease me up, woman</code></p>
+            <p class="light"><code>/frink computer hacking</code></p>
           </div>
         </div>
       </div>
@@ -34,14 +34,14 @@
             <img src="https://i.imgur.com/vQPF6Kq.png">
           </div>
           <div class="card-action valign-wrapper">
-            <p class="light"><code>/morbo sexlexia</code></p>
+            <p class="light"><code>/morbo crushed pelvises</code></p>
           </div>
         </div>
       </div>
     </div>
     <p class="light">Sometimes this is exactly what you want, and can yield some pretty hilarious results when it's not.</p>
 
-    <p class="light">If you want to provide different a different text overlay and search string, separate them with <code>--</code>. For example:</p>
+    <p class="light">If you want to provide different a different text overlay, separate the search string and text overlay with <code>|</code>. For example:</p>
     <div class="row">
       <div class="col s12 m6">
         <div class="card">
@@ -49,7 +49,7 @@
             <img src="https://i.imgur.com/vSPFpnU.png">
           </div>
           <div class="card-action valign-wrapper">
-            <p class="light"><code>/frink grease me up, woman -- glayvin!</code></p>
+            <p class="light"><code>/frink computer hacking | all this slack bot dev is making me thirsty</code></p>
           </div>
         </div>
       </div>
@@ -59,13 +59,13 @@
             <img src="https://i.imgur.com/8eY6f6u.png">
           </div>
           <div class="card-action valign-wrapper">
-            <p class="light"><code>/morbo do the hustle -- do the bartman</code></p>
+            <p class="light"><code>/morbo do the hustle | do the bartman</code></p>
           </div>
         </div>
       </div>
     </div>
 
-    <p class="light">This applies to all the other command types as well. Anywhere there's a search string, you can provide a search string and text overlay separated by <code>--</code>.</p>
+    <p class="light">This applies to all the other command types as well. Anywhere there's a search string, you can provide a search string and text overlay separated by <code>|</code>.</p>
 
     <h5><code>random</code> mode</h5>
     <p class="light">If <code>random</code> is provided as the first argument in the query, a random frame from the search results will be chosen, and immediately sent to the channel. For example:</p>
@@ -76,7 +76,7 @@
             <img src="https://i.imgur.com/hVhk2ZH.png">
           </div>
           <div class="card-action valign-wrapper">
-            <p class="light"><code>/frink random bart!</code></p>
+            <p class="light"><code>/frink random d'oh</code></p>
           </div>
         </div>
       </div>
@@ -86,14 +86,14 @@
             <img src="https://i.imgur.com/53n4F5N.png">
           </div>
           <div class="card-action valign-wrapper">
-            <p class="light"><code>/morbo random good news, everyone</code></p>
+            <p class="light"><code>/morbo random good news</code></p>
           </div>
         </div>
       </div>
     </div>
 
     <h5><code>images</code> mode</h5>
-    <p class="light">If <code>images</code> is provided as the first argument in the query, you will be presented with a selection of matching frames in what Slack calls an "ephemeral" message (which is displayed only to you, and not sent to the channel). Each frame has a <code>Send</code> button which, when pressed, will dismiss the ephemeral message and send the selected frame to channel. At the bottom there is a <code>Cancel</code> button which will dismiss the ephemeral message, and nothing will be sent to channel. For example, executing <code>/morbo images seymour</code>:</p>
+    <p class="light">If <code>images</code> is provided as the first argument in the query, you will be presented with a selection of matching frames in what Slack calls an "ephemeral" message (which is displayed only to you, and not sent to the channel). Each frame has a <code>Send</code> button which, when pressed, will dismiss the ephemeral message and send the selected frame to channel. At the bottom there is a <code>Cancel</code> button which will dismiss the ephemeral message, and nothing will be sent to channel. For example:</p>
     <div class="row">
       <div class="col s12 m6">
         <div class="card">

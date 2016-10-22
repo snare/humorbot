@@ -3,3 +3,5 @@ frink_token: SLACK_TOKEN
 
 slack_client_id: null
 slack_client_secret: null
+
+debug_logging: false

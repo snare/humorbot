@@ -1,1 +1,1 @@
-web: gunicorn humorbot:app --log-file -
+web: gunicorn humorbot:app.app --log-file -

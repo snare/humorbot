@@ -10,8 +10,15 @@ setup(
     keywords="humorbot",
     url="https://github.com/snare/humorbot",
     packages=find_packages(),
-    install_requires=['flask', 'requests', 'scruffington', 'slack_client'],
-    package_data={'humorbot': ['templates/*', 'defaults.yaml']},
+    install_requires=[
+        'flask',
+        'requests',
+        'scruffington',
+        'slackclient',
+        'fuzzywuzzy',
+        'python-Levenshtein'
+    ],
+    package_data={'humorbot': ['templates/*', 'static/*', 'defaults.yaml']},
     entry_points={
         'console_scripts': ['humorbot=humorbot:main']
     },
