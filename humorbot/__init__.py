@@ -8,6 +8,7 @@ config = ConfigFile('~/.humourbot.conf', defaults=PackageFile('defaults.yaml'), 
 config.load()
 
 logging.basicConfig(stream=sys.stdout, level=logging.DEBUG if config.debug_logging else logging.INFO)
+logging.getLogger("requests").setLevel(logging.WARNING)
 
 from . import app
 app.config = config

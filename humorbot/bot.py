@@ -20,7 +20,10 @@ Generate a selection of still images for _do the hustle_:
 Generate a GIF for _do the hustle_:
 `/morbo gif do the hustle`
 Generate a GIF with search term _sure baby, i know it_ but text overlay _shut up baby, i know it_ (because Morbotron has the wrong subtitles so it won't match properly):
-`/morbo gif sure baby, i know it | shut up baby, i know it`"""
+`/morbo gif sure baby, i know it | shut up baby, i know it`
+Generate a selection of GIFs for _seymour_:
+`/morbo gifs seymour`
+"""
 
 FRINK_USAGE = """Display this help:
 `/frink help`
@@ -37,9 +40,13 @@ Generate a selection of still images for _don't mind if i do_:
 Generate a GIF for _don't mind if i do_:
 `/frink gif don't mind if i do`
 Generate a GIF for _don't mind if i do_ with a different text overlay:
-`/frink gif don't mind if i do | do mind if I don't`"""
+`/frink gif don't mind if i do | do mind if I don't`
+Generate a selection of GIFs for _rebigulator_:
+`/frink gifs rebigulator`
+"""
 
 MAX_IMAGES = 10
+MAX_GIFS = 5
 
 
 class Humorbot(object):
@@ -63,7 +70,7 @@ class Humorbot(object):
         """
         # work out what action we got
         tokens = text.split()
-        valid_actions = ['help', 'usage', 'image', 'images', 'random', 'gif']
+        valid_actions = ['help', 'usage', 'image', 'images', 'random', 'gif', 'gifs']
         if len(tokens) and tokens[0] in valid_actions:
             action = tokens[0]
             tokens.pop(0)
@@ -108,6 +115,8 @@ class Humorbot(object):
             res = self.images(data['user_name'], query, overlay, command)
         elif action == 'gif':
             res = self.gif(data['user_name'], query, overlay, command)
+        elif action == 'gifs':
+            res = self.gifs(data['user_name'], query, overlay, command)
 
         return res
 
@@ -282,6 +291,80 @@ class Humorbot(object):
 
         return res
 
+    def gifs(self, username, query, overlay='', command='morbo'):
+        """
+        Implement the 'gifs' action.
+        """
+        backend = self.backend(command)
+        search_result = self.backend(command).search(query)
+
+        # Generate attachments for MAX_GIFS options
+        attachments = []
+        ol = overlay
+        for r in search_result[:min(MAX_GIFS, len(search_result))]:
+            context = backend.context_frames(r['Episode'], r['Timestamp'])
+            if len(context):
+                args = u'gifs {} | {}'.format(query, overlay) if overlay else u'gifs {}'.format(query)
+                if not overlay:
+                    ol = backend.caption_for_query(r['Episode'], r['Timestamp'], query)
+                url = backend.gif_url(context[0]['Episode'], context[0]['Timestamp'], context[-1]['Timestamp'], ol)
+                attachments.append({
+                    'fallback': url,
+                    'image_url': url,
+                    'callback_id': 'gif_builder',
+                    'actions': [
+                        {
+                            'name': 'send',
+                            'text': 'Send',
+                            'type': 'button',
+                            'style': 'good',
+                            'value': json.dumps({
+                                'url': url,
+                                'text': ol,
+                                'args': args,
+                                'command': command
+                            })
+                        },
+                        {
+                            'name': 'edit',
+                            'text': 'Edit',
+                            'type': 'button',
+                            'value': json.dumps({
+                                'args': args,
+                                'text': ol,
+                                'episode': context[0]['Episode'],
+                                'context': [i['Timestamp'] for i in context],
+                                'start': context[0]['Timestamp'],
+                                'end': context[-1]['Timestamp'],
+                                'show_text': True,
+                                'command': command
+                            })
+                        },
+                    ]
+                })
+
+        # Add a cancel button
+        attachments.append({
+            'callback_id': 'image_preview',
+            'actions': [
+                {
+                    'name': 'cancel',
+                    'text': 'Cancel',
+                    'type': 'button',
+                    'value': 'cancel'
+                }
+            ]
+        })
+
+        # Build an ephemeral message for the preview
+        res = {
+            'text': '',
+            'response_type': 'ephemeral',
+            'attachments': attachments
+        }
+
+        return res
+
     def send(self, payload):
         """
         Send an edited GIF or selected image.
@@ -316,7 +399,7 @@ class Humorbot(object):
         show_hide_data = dict(data)
         show_hide_data['show_text'] = not show_hide_data['show_text']
         attachments.append({
-            'fallback': data['text'],
+            'fallback': url,
             'image_url': url,
             'callback_id': 'gif_builder',
             'actions': [
