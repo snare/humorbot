@@ -102,6 +102,8 @@ class Humorbot(object):
 
         log.debug(u"Processing /{} {} action with query '{}' and text overlay '{}'".format(command, action, query,
                                                                                            overlay))
+        log.info(u"command={}, username={}, team_domain={}, text={}".format(command, data['user_name'],
+                                                                            data['team_domain'], data['text']))
 
         if action == 'help':
             # Display usage
@@ -383,6 +385,7 @@ class Humorbot(object):
                 }
             ]
         }
+        log.info("sending to team {}: {}".format(payload['team']['domain'], res['attachments'][0]['fallback']))
 
         return res
 
